@@ -260,10 +260,6 @@ def sat_jitter(x):
     return tf.cast(x_f32, x.dtype)
 
 def build_efficientnetb0_model():
-    """
-    Same architecture as EfficientNetB0 training script
-    (without the mixed precision policy setup, which belongs in training code).
-    """
     inputs = keras.Input(shape=(*IMG_SIZE, 3), name="input_layer")
 
     data_augmentation = keras.Sequential(
@@ -286,12 +282,11 @@ def build_efficientnetb0_model():
         name="effnet_preprocess",
     )(x)
 
+    # ✅ FIXED: No 'name' argument
     base_model = EfficientNetB0(
         include_top=False,
-        weights="imagenet",
-        name="efficientnetb0",
+        weights="imagenet"
     )
-
     x = base_model(x, training=False)
 
     x = layers.GlobalAveragePooling2D(name="gap")(x)
