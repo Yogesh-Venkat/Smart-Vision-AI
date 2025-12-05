@@ -34,7 +34,7 @@ jobs:
       # Step 5 — Push code to Hugging Face Space
       - name: Deploy to Hugging Face Space
         env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_TOKEN_01: ${{ secrets.HF_TOKEN_01 }}
           HF_SPACE_ID: "yogesh-venkat/SmartVision_AI"  
         run: |
           python - << 'EOF'
@@ -42,7 +42,7 @@ jobs:
           import os
 
           space_id = os.getenv("HF_SPACE_ID")
-          token = os.getenv("HF_TOKEN")
+          token = os.getenv("HF_TOKEN_01")
 
           api = HfApi()
 
