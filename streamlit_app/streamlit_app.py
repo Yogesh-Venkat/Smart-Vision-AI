@@ -597,7 +597,7 @@ of **25 COCO classes**. It brings together:
             cols = st.columns(min(3, len(imgs)))
             for i, img_path in enumerate(imgs[:3]):
                 with cols[i]:
-                    st.image(img_path, caption=os.path.basename(img_path), use_container_width=False)
+                    st.image(img_path, caption=os.path.basename(img_path), width='content')
         else:
             st.info("No sample images found in `inference_outputs/` yet.")
     else:
@@ -620,7 +620,7 @@ The app will run **all 4 CNN models** and show **top-5 predictions** per model.
 
     if uploaded_file is not None:
         pil_img = read_image_file(uploaded_file)
-        st.image(pil_img, caption="Uploaded image", use_container_width=False)
+        st.image(pil_img, caption="Uploaded image", width='content')
 
         with st.spinner("Loading classification models..."):
             cls_models = load_classification_models()
@@ -660,16 +660,23 @@ YOLOv8 will detect all objects and optionally verify them with the best classifi
 """
     )
 
-    conf_th = st.slider("Confidence threshold", 0.1, 0.9, 0.5, 0.05)
-    use_classifier = st.checkbox("Use ResNet50 classifier verification on crops", value=True)
+
+
+
+    with st.form("detection_form"):
+        conf_th = st.slider("Confidence threshold", 0.1, 0.9, 0.5, 0.05)
+        use_classifier = st.checkbox("Use ResNet50 classifier verification", value=True)
+        
+        # 2. Add a Submit button
+        submitted = st.form_submit_button("Run Detection")
 
     uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
-
+    
     if uploaded_file is not None:
         pil_img = read_image_file(uploaded_file)
 
         # ❌ REMOVE THIS (caused duplicate)
-        # st.image(pil_img, caption="Uploaded image", use_container_width=False)
+        # st.image(pil_img, caption="Uploaded image", width='content')
 
         with st.spinner("Loading YOLO model..."):
             yolo_model = load_yolo_model()
@@ -702,10 +709,10 @@ YOLOv8 will detect all objects and optionally verify them with the best classifi
         col1, col2 = st.columns(2)
 
         with col1:
-            st.image(pil_img, caption="Uploaded Image", use_container_width=True)
+            st.image(pil_img, caption="Uploaded Image", width='stretch')
 
         with col2:
-            st.image(result["annotated_image"], caption="Detected Result", use_container_width=True)
+            st.image(result["annotated_image"], caption="Detected Result", width='stretch')
 
         st.write(f"YOLO inference time: {result['yolo_inference_time_sec']*1000:.1f} ms")
         st.write(f"Number of detections: {len(result['detections'])}")
@@ -722,7 +729,7 @@ YOLOv8 will detect all objects and optionally verify them with the best classifi
                 }
                 for det in result["detections"]
             ])
-            st.dataframe(df_det, use_container_width=False)
+            st.dataframe(df_det, width='content')
 
 # ------------------------------------------------------------
 # PAGE 4 – MODEL PERFORMANCE
@@ -736,24 +743,24 @@ elif page == "📊 Model Performance":
     if df_cls.empty:
         st.info("No classification metrics found yet in `smartvision_metrics/`.")
     else:
-        st.dataframe(df_cls, use_container_width=False)
+        st.dataframe(df_cls, width='content')
 
         col1, col2 = st.columns(2)
         with col1:
             st.bar_chart(
                 df_cls.set_index("Model")["Accuracy"],
-                use_container_width=True,
+                width='stretch',
             )
         with col2:
             st.bar_chart(
                 df_cls.set_index("Model")["F1 (weighted)"],
-                use_container_width=True,
+                width='stretch',
             )
 
         st.markdown("#### Inference Speed (images/sec)")
         st.bar_chart(
             df_cls.set_index("Model")["Images/sec"],
-            use_container_width=True,
+            width='stretch',
         )
 
     # --- YOLO metrics ---
@@ -784,7 +791,7 @@ elif page == "📊 Model Performance":
         ]
         if imgs:
             for img in sorted(imgs):
-                st.image(img, caption=os.path.basename(img), use_container_width=True)
+                st.image(img, caption=os.path.basename(img), width='stretch')
         else:
             st.info("No comparison plots found in `smartvision_metrics/comparison_plots/`.")
     else:
@@ -824,7 +831,7 @@ from your webcam and run YOLOv8 detection on it.
                 conf_threshold=conf_th,
             )
 
-        st.image(result["annotated_image"], caption="Detections", use_container_width=False)
+        st.image(result["annotated_image"], caption="Detections", width='content')
         st.write(f"YOLO inference time: {result['yolo_inference_time_sec']*1000:.1f} ms")
         st.write(f"Number of detections: {len(result['detections'])}")
 
