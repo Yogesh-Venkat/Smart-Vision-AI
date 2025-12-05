@@ -1,47 +1,45 @@
 name: Deploy to Hugging Face Space
-- name: Checkout code
-  uses: actions/checkout@v3
-  with:
-    lfs: true  # Add this line
-    
-- name: Fetch LFS files
-  run: git lfs pull  # Add this step
+
 on:
   push:
     branches:
-      - main  # deploy whenever you push to main
+      - main
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1 — Checkout GitHub repo
+      # Step 1 — Checkout repo with LFS
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
 
-      # Step 2 — Setup Python (needed for hf CLI & git-lfs)
+      # (Optional) Verify that LFS files are real binaries, not pointers
+      - name: Verify model files
+        run: |
+          ls -lh saved_models || echo "saved_models folder not found"
+          file saved_models/resnet50_v2_stage2_best.weights.h5 || echo "resnet file missing"
+          file saved_models/vgg16_v2_stage2_best.h5 || echo "vgg16 file missing"
+
+      # Step 2 — Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
-      # Step 3 — Install git-lfs (for large model files)
-      - name: Install Git LFS
-        run: |
-          sudo apt-get update
-          sudo apt-get install git-lfs
-          git lfs install
-
-      # Step 4 — Install HuggingFace Hub CLI
+      # Step 3 — Install Hugging Face Hub client
       - name: Install Hugging Face Hub
-        run: pip install huggingface_hub
+        run: pip install --upgrade huggingface_hub
 
-      # Step 5 — Push code to Hugging Face Space
+      # Step 4 — Upload entire repo to the Space
       - name: Deploy to Hugging Face Space
         env:
           HF_TOKEN_01: ${{ secrets.HF_TOKEN_01 }}
-          HF_SPACE_ID: "yogesh-venkat/SmartVision_AI"  
+          HF_SPACE_ID: "yogesh-venkat/SmartVision_AI"
         run: |
           python - << 'EOF'
           from huggingface_hub import HfApi
@@ -49,17 +47,14 @@ jobs:
 
           space_id = os.getenv("HF_SPACE_ID")
           token = os.getenv("HF_TOKEN_01")
-
           api = HfApi()
 
           print(f"🚀 Deploying to Hugging Face Space: {space_id}")
-
-          # Upload entire repository to the Space
           api.upload_folder(
               repo_id=space_id,
-              token=token,
-              folder_path=".",     # current directory
               repo_type="space",
-              commit_message="Auto-deploy from GitHub Actions"
+              folder_path=".",
+              token=token,
+              commit_message="Auto-deploy from GitHub Actions",
           )
           EOF
