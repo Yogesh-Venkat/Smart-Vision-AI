@@ -831,7 +831,7 @@ from your webcam and run YOLOv8 detection on it.
                 conf_threshold=conf_th,
             )
 
-        st.image(result["annotated_image"], caption="Detections", width=520)
+        st.image(result["annotated_image"], caption="Detections", width='stretch')
         st.write(f"YOLO inference time: {result['yolo_inference_time_sec']*1000:.1f} ms")
         st.write(f"Number of detections: {len(result['detections'])}")
         if result["detections"]:
