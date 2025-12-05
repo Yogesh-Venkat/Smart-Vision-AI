@@ -662,74 +662,90 @@ YOLOv8 will detect all objects and optionally verify them with the best classifi
 
 
 
+# ---- Replace your current detection block with this ----
+    uploaded_file = None
 
     with st.form("detection_form"):
+        st.subheader("Object Detection – YOLOv8 + Optional ResNet Verification")
+
+        # Put uploader inside the form so uploading doesn't trigger detection
+        uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
+
         conf_th = st.slider("Confidence threshold", 0.1, 0.9, 0.5, 0.05)
         use_classifier = st.checkbox("Use ResNet50 classifier verification", value=True)
-        
-        # 2. Add a Submit button
+
+        # Submit button (the form will only submit when this is clicked)
         submitted = st.form_submit_button("Run Detection")
 
-    uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
-    
-    if uploaded_file is not None:
-        pil_img = read_image_file(uploaded_file)
+    # Only proceed when user clicked the button AND a file is present
+    if submitted:
+        if uploaded_file is None:
+            st.warning("Please upload an image before clicking Run Detection.")
+        else:
+            pil_img = read_image_file(uploaded_file)
 
-        # ❌ REMOVE THIS (caused duplicate)
-        # st.image(pil_img, caption="Uploaded image", width=520)
+            # placeholders for in-place updates (prevents DOM insert/remove jitter)
+            left_col, right_col = st.columns(2)
+            left_ph = left_col.empty()
+            right_ph = right_col.empty()
+            table_ph = st.empty()
+            meta_ph = st.empty()
 
-        with st.spinner("Loading YOLO model..."):
-            yolo_model = load_yolo_model()
+            # show uploaded image immediately (fixed width)
+            left_ph.image(pil_img, caption="Uploaded Image", width=520)
 
-        classifier_model = None
-        if use_classifier:
-            with st.spinner("Loading ResNet50 classifier..."):
-                classifier_model = build_resnet50_model_v2()
-                weights_path = CLASSIFIER_MODEL_CONFIGS["ResNet50"]["path"]
+            # load yolo (cached) and optionally classifier (cached builder or loader)
+            with st.spinner("Loading YOLO model..."):
+                yolo_model = load_yolo_model()
 
-            if os.path.exists(weights_path):
-                try:
-                    classifier_model.load_weights(weights_path)
-                except Exception as e:
-                    st.warning(f"Could not load ResNet50 v2 weights for detection: {e}")
-                    classifier_model = None
+            classifier_model = None
+            if use_classifier:
+                with st.spinner("Loading ResNet50 classifier..."):
+                    # prefer cached loader if available
+                    try:
+                        cls_models = load_classification_models()
+                        classifier_model = cls_models.get("ResNet50")
+                    except Exception:
+                        # fallback: build & load weights (rare)
+                        classifier_model = build_resnet50_model_v2()
+                        weights_path = CLASSIFIER_MODEL_CONFIGS["ResNet50"]["path"]
+                        if os.path.exists(weights_path):
+                            try:
+                                classifier_model.load_weights(weights_path)
+                            except Exception as e:
+                                st.warning(f"Could not load ResNet50 weights: {e}")
+                                classifier_model = None
+                        else:
+                            st.warning("ResNet50 weights not found – classifier verification disabled.")
+                            classifier_model = None
+
+            # run detection (only now)
+            with st.spinner("Running detection..."):
+                result = run_yolo_with_optional_classifier(
+                    pil_img=pil_img,
+                    yolo_model=yolo_model,
+                    classifier_model=classifier_model,
+                    conf_threshold=conf_th,
+                )
+
+            # update annotated image in-place (same fixed width)
+            right_ph.image(result["annotated_image"], caption="Detected Result",  width=520)
+
+            meta_ph.write(f"YOLO inference time: {result['yolo_inference_time_sec']*1000:.1f} ms — Detections: {len(result['detections'])}")
+
+            if result["detections"]:
+                df_det = pd.DataFrame([
+                    {
+                        "YOLO label": det["label"],
+                        "YOLO confidence level": det["conf_yolo"],
+                        "CLS label": det.get("cls_label"),
+                        "CLS confidence level": det.get("cls_conf"),
+                    }
+                    for det in result["detections"]
+                ])
+                table_ph.dataframe(df_det)
             else:
-                st.warning("ResNet50 weights not found – classifier verification disabled.")
-                classifier_model = None
-
-        with st.spinner("Running detection..."):
-            result = run_yolo_with_optional_classifier(
-                pil_img=pil_img,
-                yolo_model=yolo_model,
-                classifier_model=classifier_model,
-                conf_threshold=conf_th,
-            )
-
-        # ✅ ONLY 2 IMAGES SHOWN — SIDE BY SIDE
-        col1, col2 = st.columns(2)
-
-        with col1:
-            st.image(pil_img, caption="Uploaded Image", width=520)
-
-        with col2:
-            st.image(result["annotated_image"], caption="Detected Result", width=520)
-
-        st.write(f"YOLO inference time: {result['yolo_inference_time_sec']*1000:.1f} ms")
-        st.write(f"Number of detections: {len(result['detections'])}")
-
-        if result["detections"]:
-            st.markdown("### Detected objects")
-            df_det = pd.DataFrame([
-                {
-                    "YOLO label": det["label"],
-                    "YOLO confidence level": det["conf_yolo"],
-                    "CLS label": det.get("cls_label"),
-                    "CLS confidence level": det.get("cls_conf"),
-
-                }
-                for det in result["detections"]
-            ])
-            st.dataframe(df_det, width=520)
+                table_ph.info("No detections found.")
 
 # ------------------------------------------------------------
 # PAGE 4 – MODEL PERFORMANCE
@@ -831,7 +847,7 @@ from your webcam and run YOLOv8 detection on it.
                 conf_threshold=conf_th,
             )
 
-        st.image(result["annotated_image"], caption="Detections", width='stretch')
+        st.image(result["annotated_image"], caption="Detections", width='520')
         st.write(f"YOLO inference time: {result['yolo_inference_time_sec']*1000:.1f} ms")
         st.write(f"Number of detections: {len(result['detections'])}")
         if result["detections"]:
