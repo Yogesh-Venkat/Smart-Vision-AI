@@ -52,7 +52,7 @@ from pathlib import Path
 
 # Resolve repository root relative to this file (streamlit_app/app.py)
 THIS_FILE = Path(__file__).resolve()
-REPO_ROOT = THIS_FILE.parent.parent  # repo/
+REPO_ROOT = THIS_FILE.parent # repo/
 SAVED_MODELS_DIR = REPO_ROOT / "saved_models"
 YOLO_RUNS_DIR = REPO_ROOT / "yolo_runs"
 SMARTVISION_METRICS_DIR = REPO_ROOT / "smartvision_metrics"
