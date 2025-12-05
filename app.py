@@ -17,7 +17,7 @@ from ultralytics import YOLO
 # Keras application imports
 from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input as vgg16_preprocess
 from tensorflow.keras.applications.efficientnet import EfficientNetB0, preprocess_input as effnet_preprocess
-rom pathlib import Path
+from pathlib import Path
 # ------------------------------------------------------------
 # GLOBAL CONFIG
 # ------------------------------------------------------------
@@ -556,7 +556,7 @@ page = st.sidebar.radio("Navigate", PAGES)
 # ------------------------------------------------------------
 # PAGE 1 – HOME
 # ------------------------------------------------------------
-iif page == "🏠 Home":
+if page == "🏠 Home":
     col1, col2 = st.columns([1.2, 1])
 
     with col1:
