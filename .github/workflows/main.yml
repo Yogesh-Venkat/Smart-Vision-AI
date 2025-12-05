@@ -1,0 +1,59 @@
+name: Deploy to Hugging Face Space
+
+on:
+  push:
+    branches:
+      - main  # deploy whenever you push to main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1 — Checkout GitHub repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2 — Setup Python (needed for hf CLI & git-lfs)
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      # Step 3 — Install git-lfs (for large model files)
+      - name: Install Git LFS
+        run: |
+          sudo apt-get update
+          sudo apt-get install git-lfs
+          git lfs install
+
+      # Step 4 — Install HuggingFace Hub CLI
+      - name: Install Hugging Face Hub
+        run: pip install huggingface_hub
+
+      # Step 5 — Push code to Hugging Face Space
+      - name: Deploy to Hugging Face Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_SPACE_ID: "yogesh-venkat/SmartVision_AI"  
+        run: |
+          python - << 'EOF'
+          from huggingface_hub import HfApi
+          import os
+
+          space_id = os.getenv("HF_SPACE_ID")
+          token = os.getenv("HF_TOKEN")
+
+          api = HfApi()
+
+          print(f"🚀 Deploying to Hugging Face Space: {space_id}")
+
+          # Upload entire repository to the Space
+          api.upload_folder(
+              repo_id=space_id,
+              token=token,
+              folder_path=".",     # current directory
+              repo_type="space",
+              commit_message="Auto-deploy from GitHub Actions"
+          )
+          EOF

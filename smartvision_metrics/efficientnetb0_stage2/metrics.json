@@ -1,0 +1,12 @@
+{
+  "model_name": "efficientnetb0_stage2",
+  "accuracy": 0.7973333333333333,
+  "precision_weighted": 0.8018408351194729,
+  "recall_weighted": 0.7973333333333333,
+  "f1_weighted": 0.7955331918405726,
+  "top5_accuracy": 0.92,
+  "avg_inference_time_sec": 0.07931595280021429,
+  "images_per_second": 12.607804164174375,
+  "model_size_mb": 44.42613220214844,
+  "num_parameters": 4390076
+}

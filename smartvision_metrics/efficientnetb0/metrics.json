@@ -1,0 +1,12 @@
+{
+  "model_name": "efficientnetb0",
+  "accuracy": 0.7573333333333333,
+  "precision_weighted": 0.7654770197123137,
+  "recall_weighted": 0.7573333333333333,
+  "f1_weighted": 0.7558831298763445,
+  "top5_accuracy": 0.8746666666666667,
+  "avg_inference_time_sec": 0.7098700226666406,
+  "images_per_second": 1.4087085918116116,
+  "model_size_mb": 71.93372344970703,
+  "num_parameters": 4390076
+}

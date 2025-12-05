@@ -1,0 +1,12 @@
+{
+  "model_name": "vgg16",
+  "accuracy": 0.32266666666666666,
+  "precision_weighted": 0.3255909688667125,
+  "recall_weighted": 0.32266666666666666,
+  "f1_weighted": 0.29383345197671074,
+  "top5_accuracy": 0.632,
+  "avg_inference_time_sec": 0.2846047629333722,
+  "images_per_second": 3.5136446407051394,
+  "model_size_mb": 57.79020690917969,
+  "num_parameters": 14852441
+}

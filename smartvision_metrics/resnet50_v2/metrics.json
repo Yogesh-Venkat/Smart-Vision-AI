@@ -1,0 +1,12 @@
+{
+  "model_name": "resnet50_v2",
+  "accuracy": 0.08266666666666667,
+  "precision_weighted": 0.08915430648273155,
+  "recall_weighted": 0.08266666666666667,
+  "f1_weighted": 0.04015894470864734,
+  "top5_accuracy": 0.24,
+  "avg_inference_time_sec": 0.19487532906665,
+  "images_per_second": 5.131485882740891,
+  "model_size_mb": 164.77658462524414,
+  "num_parameters": 24127897
+}

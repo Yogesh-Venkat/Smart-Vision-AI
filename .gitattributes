@@ -1,0 +1,5 @@
+env/Lib/site-packages/tensorflow/python/_pywrap_tensorflow_common.dll filter=lfs diff=lfs merge=lfs -text
+env/Lib/site-packages/torch/lib/torch_cpu.dll filter=lfs diff=lfs merge=lfs -text
+env/Lib/site-packages/_polars_runtime_32/_polars_runtime_32.pyd filter=lfs diff=lfs merge=lfs -text
+saved_models/resnet50_v2_stage2_best.weights.h5 filter=lfs diff=lfs merge=lfs -text
+saved_models/vgg16_v2_stage2_best.h5 filter=lfs diff=lfs merge=lfs -text

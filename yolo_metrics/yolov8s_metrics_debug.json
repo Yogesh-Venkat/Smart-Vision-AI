@@ -1,0 +1,14 @@
+{
+  "model_name": "yolov8s_smartvision",
+  "quick_test": true,
+  "epochs": 1,
+  "run_dir": "yolo_runs\\smartvision_yolov8s",
+  "best_weights": "yolo_runs\\smartvision_yolov8s\\weights\\best.pt",
+  "val_map_50": 0.005802585281640556,
+  "val_map_50_95": 0.001741890531169728,
+  "test_map_50": 0.005286295131886065,
+  "test_map_50_95": 0.0014276108781617163,
+  "num_val_images_for_speed_test": 10,
+  "avg_inference_time_sec": 0.4105548999970779,
+  "fps": 2.4357278405570546
+}

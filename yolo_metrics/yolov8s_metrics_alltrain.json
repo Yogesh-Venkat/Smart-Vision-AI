@@ -1,0 +1,12 @@
+{
+  "train_all_images": {
+    "images": 2500,
+    "labels": 2500
+  },
+  "val_map50": 0.27555682752735633,
+  "test_map50": 0.2593958177283333,
+  "val_map50_95": 0.12415944828322929,
+  "test_map50_95": 0.1028489562099253,
+  "run_dir": "yolo_runs\\smartvision_yolov8s_alltrain",
+  "best_weights": "yolo_runs\\smartvision_yolov8s_alltrain\\weights\\best.pt"
+}
