@@ -17,8 +17,11 @@ from ultralytics import YOLO
 # Keras application imports
 from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input as vgg16_preprocess
 from tensorflow.keras.applications.efficientnet import EfficientNetB0, preprocess_input as effnet_preprocess
-
-# ------------------------------------------------------------use
+rom pathlib import Path
+# ------------------------------------------------------------
+# GLOBAL CONFIG
+# ------------------------------------------------------------
+# ------------------------------------------------------------
 # GLOBAL CONFIG
 # ------------------------------------------------------------
 st.set_page_config(
@@ -27,28 +30,42 @@ st.set_page_config(
     layout="wide",
 )
 
-st.markdown(
-    """
-    <h1 style='text-align:center;'>
-        🤖⚡ <b>SmartVision AI</b> ⚡🤖
-    </h1>
-    <h3 style='text-align:center; margin-top:-10px;'>
-        🔎🎯 Intelligent Multi-Class Object Recognition System 🎯🔎
-    </h3>
-    """,
-    unsafe_allow_html=True
-)
+# ---- Compact Header Styling ----
+st.markdown("""
+<style>
+/* Reduce Streamlit's default top padding */
+.block-container {
+    padding-top: 1rem !important;
+}
 
+/* Tighten spacing between header lines */
+h1 {
+    margin-top: 0.2rem !important;
+    margin-bottom: 0.1rem !important;
+}
 
+h3 {
+    margin-top: -0.3rem !important;
+    margin-bottom: 0.1rem !important;
+}
 
-st.markdown(
-    "<p style='text-align:center; color: gray;'>End-to-end computer vision pipeline on a COCO subset of 25 everyday object classes</p>",
-    unsafe_allow_html=True
-)
+/* Center text utility */
+.center-text {
+    text-align: center !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ---- Compact Header ----
+st.markdown("""
+<h1 class='center-text'>🤖⚡ <b>SmartVision AI</b> ⚡🤖</h1>
+<h3 class='center-text'>🔎🎯 Intelligent Multi-Class Object Recognition System 🎯🔎</h3>
+<p class='center-text' style='color: gray; margin-top:-6px;'>
+    End-to-end computer vision pipeline on a COCO subset of 25 everyday object classes
+</p>
+""", unsafe_allow_html=True)
 
 st.divider()
-
-from pathlib import Path
 
 # Resolve repository root relative to this file (streamlit_app/app.py)
 THIS_FILE = Path(__file__).resolve()
@@ -539,7 +556,7 @@ page = st.sidebar.radio("Navigate", PAGES)
 # ------------------------------------------------------------
 # PAGE 1 – HOME
 # ------------------------------------------------------------
-if page == "🏠 Home":
+iif page == "🏠 Home":
     col1, col2 = st.columns([1.2, 1])
 
     with col1:
@@ -557,6 +574,34 @@ of **25 COCO classes**. It brings together:
 - 📊 **Interactive Streamlit Dashboard** for demos, metrics visualization, and experiments
             """
         )
+
+
+        st.markdown("""
+        ### 🏷️ COCO Subset – 25 Classes Used for Training
+
+        <style>
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            margin: 4px;
+            background-color: #f0f2f6;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+        classes = [
+            'person','bicycle','car','motorcycle','airplane','bus','truck','traffic light',
+            'stop sign','bench','bird','cat','dog','horse','cow','elephant','bottle','cup',
+            'bowl','pizza','cake','chair','couch','bed','potted plant'
+        ]
+
+        # Capitalize first letter of each word
+        html = "".join([f"<span class='badge'>{c.title()}</span>" for c in classes])
+
+        st.markdown(html, unsafe_allow_html=True)
+
 
     with col2:
         st.subheader("🕹️ How to Use This App")
@@ -597,7 +642,7 @@ of **25 COCO classes**. It brings together:
             cols = st.columns(min(3, len(imgs)))
             for i, img_path in enumerate(imgs[:3]):
                 with cols[i]:
-                    st.image(img_path, caption=os.path.basename(img_path), width=520)
+                    st.image(img_path, caption=os.path.basename(img_path), width= 520)
         else:
             st.info("No sample images found in `inference_outputs/` yet.")
     else:
@@ -660,14 +705,11 @@ YOLOv8 will detect all objects and optionally verify them with the best classifi
 """
     )
 
-
-
 # ---- Replace your current detection block with this ----
     uploaded_file = None
 
     with st.form("detection_form"):
-        st.subheader("Object Detection – YOLOv8 + Optional ResNet Verification")
-
+        
         # Put uploader inside the form so uploading doesn't trigger detection
         uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
 
