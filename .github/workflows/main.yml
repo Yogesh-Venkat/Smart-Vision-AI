@@ -1,5 +1,11 @@
 name: Deploy to Hugging Face Space
-
+- name: Checkout code
+  uses: actions/checkout@v3
+  with:
+    lfs: true  # Add this line
+    
+- name: Fetch LFS files
+  run: git lfs pull  # Add this step
 on:
   push:
     branches:
