@@ -19,7 +19,7 @@ keras==2.15.0
 ultralytics
 streamlit
 numpy
-pillow
 pandas
+
 
 
