@@ -76,7 +76,7 @@ SMARTVISION_METRICS_DIR = REPO_ROOT / "smartvision_metrics"
 SMARTVISION_DATASET_DIR = REPO_ROOT / "smartvision_dataset"
 
 # Then turn constants into Path objects / strings
-YOLO_WEIGHTS_PATH = str(YOLO_RUNS_DIR / "smartvision_yolov8s6 - Copy" / "weights" / "best.pt")
+YOLO_WEIGHTS_PATH = str(YOLO_RUNS_DIR / "smartvision_yolov8s_alltrain3" / "weights" / "best.pt")
 
 CLASSIFIER_MODEL_CONFIGS = {
     "VGG16": {
@@ -104,7 +104,7 @@ CLASS_METRIC_PATHS = {
     "EfficientNetB0": str(SMARTVISION_METRICS_DIR / "efficientnetb0" / "metrics.json"),
 }
 
-YOLO_METRICS_JSON = str(REPO_ROOT / "yolo_metrics" / "yolov8s_metrics.json")
+YOLO_METRICS_JSON = str(YOLO_RUNS_DIR / "smartvision_yolov8s_alltrain3" /"validation_all_20251206_210906" /"validation_metrics_all.json")
 BASE_DIR = str(SMARTVISION_DATASET_DIR)
 CLASS_DIR = str(SMARTVISION_DATASET_DIR / "classification")
 DET_DIR = str(SMARTVISION_DATASET_DIR / "detection")
@@ -577,7 +577,7 @@ of **25 COCO classes**. It brings together:
 
 
         st.markdown("""
-        ### 🏷️ COCO Subset – 25 Classes Used for Training
+        ### 🏷️ COCO Subset – 25 Classes Used for Classification and Detection
 
         <style>
         .badge {
@@ -827,15 +827,19 @@ elif page == "📊 Model Performance":
     if not yolo_m:
         st.info("No YOLO metrics found yet in `yolo_metrics/`.")
     else:
+        # Extract nested metrics
+        overall = yolo_m.get('overall_metrics', {})
+        speed = yolo_m.get('speed_metrics', {})
+        
         col1, col2, col3 = st.columns(3)
         with col1:
-            st.metric("mAP@0.5", f"{yolo_m.get('map_50', 0):.3f}")
+            st.metric("Precision", f"{overall.get('precision', 0):.3f}")
+            st.metric("mAP@0.5", f"{overall.get('mAP50', 0):.3f}")
         with col2:
-            st.metric("mAP@0.5:0.95", f"{yolo_m.get('map_50_95', 0):.3f}")
+            st.metric("Recall", f"{overall.get('recall', 0):.3f}")
+            st.metric("mAP@0.5:0.95", f"{overall.get('mAP50_95', 0):.3f}")
         with col3:
-            st.metric("YOLO FPS", f"{yolo_m.get('fps', 0):.2f}")
-
-        st.write("YOLO metrics JSON:", YOLO_METRICS_JSON)
+            st.metric("YOLO FPS", f"{speed.get('fps', 0):.2f}")
 
     # --- Confusion matrix & comparison plots (if available) ---
     st.markdown("### 📈 Comparison Plots & Confusion Matrices")
