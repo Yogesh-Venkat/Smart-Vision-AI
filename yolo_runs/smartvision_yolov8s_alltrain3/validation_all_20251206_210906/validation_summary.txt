@@ -1,0 +1,46 @@
+======================================================================
+YOLO VALIDATION REPORT - ALL IMAGES
+======================================================================
+
+Timestamp: 2025-12-06 21:18:00
+Model: yolo_runs/smartvision_yolov8s_alltrain3/weights/best.pt
+Validation Type: All Images (Train + Val + Test)
+
+======================================================================
+OVERALL PERFORMANCE
+======================================================================
+mAP@0.5        : 0.7802
+mAP@0.5:0.95   : 0.4477
+Precision      : 0.9289
+Recall         : 0.7420
+
+======================================================================
+INFERENCE SPEED
+======================================================================
+Time/Image     : 284.34 ms
+FPS            : 3.52 images/sec
+Test Images    : 100
+
+======================================================================
+PER-CLASS PERFORMANCE (Top 10 by mAP@0.5)
+======================================================================
+Class                Precision    Recall       mAP@0.5     
+----------------------------------------------------------------------
+potted plant         0.9847       0.8725       0.6626      
+airplane             0.9805       0.8778       0.6145      
+cat                  0.9826       0.8938       0.5714      
+chair                0.9698       0.7698       0.5378      
+bench                0.9288       0.8438       0.5016      
+cow                  0.9464       0.8097       0.4928      
+stop sign            0.9287       0.8554       0.4894      
+bowl                 0.9621       0.7894       0.4722      
+pizza                0.9285       0.9064       0.4665      
+cake                 0.9165       0.7278       0.4614      
+
+======================================================================
+NOTES
+======================================================================
+- This validation uses ALL images (train+val+test combined)
+- These metrics represent the model's performance on the entire dataset
+- For standard ML evaluation, use separate train/val/test splits
+- These metrics are suitable for production deployment assessment
