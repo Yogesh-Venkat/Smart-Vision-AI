@@ -801,15 +801,17 @@ elif page == "📊 Model Performance":
     if df_cls.empty:
         st.info("No classification metrics found yet in `smartvision_metrics/`.")
     else:
-        st.dataframe(df_cls, width=520)
+        st.dataframe(df_cls, width='content')
 
         col1, col2 = st.columns(2)
         with col1:
+            st.markdown("#### Accuracy")
             st.bar_chart(
                 df_cls.set_index("Model")["Accuracy"],
                 width=520,
             )
         with col2:
+            st.markdown("#### F1 (weighted)")
             st.bar_chart(
                 df_cls.set_index("Model")["F1 (weighted)"],
                 width=520,
